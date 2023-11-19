@@ -1,5 +1,5 @@
-from simplex import Matrix, Vector
-from methods import north_west
+from data.models import Matrix, Vector
+from methods.north_west import NorthwestMethod
 
 
 def main():
@@ -16,13 +16,13 @@ def main():
     S.mInput()
 
     print("Solving transportation problem using Northwest Cornel rule...")
-    N: north_west.NorthwestMethod(A, D, S)
+    N: NorthwestMethod(A, D, S)
 
     print("Solving transportation problem using Russel's approximation method...")
-    """R: russel_s_approximation.RusselMethod(A, D, S)"""
+    """R: RusselMethod(A, D, S)"""
 
     print("Solving transportation problem using Vogel's approximation method...")
-    """V: vogel_s_approximation.VogelMethod(A, D, S)"""
+    """V: VogelMethod(A, D, S)"""
 
 
 if __name__ == "__main__":

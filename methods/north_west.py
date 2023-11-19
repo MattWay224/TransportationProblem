@@ -1,4 +1,4 @@
-from simplex import Matrix, Vector, IdentityMatrix
+from data.models import Matrix, Vector, IdentityMatrix
 from dataclasses import dataclass
 
 
