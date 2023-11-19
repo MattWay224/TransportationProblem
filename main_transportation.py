@@ -1,5 +1,6 @@
-from simplex import Matrix, Vector
-from methods import north_west
+from data.models import Matrix, Vector
+from methods.north_west import NorthwestMethod
+from methods.vogel import VogelMethod
 
 
 def main():
@@ -9,20 +10,22 @@ def main():
 
     print("Enter a Demand vector")
     D: Vector = Vector()
-    D.mInput()
+    D.vInput()
 
     print("Enter a Supply vector")
     S: Vector = Vector()
-    S.mInput()
+    S.vInput()
 
     print("Solving transportation problem using Northwest Cornel rule...")
-    N: north_west.NorthwestMethod(A, D, S)
+    n = NorthwestMethod(A, D, S)
+    print(n.nw_solve())
 
     print("Solving transportation problem using Russel's approximation method...")
-    """R: russel_s_approximation.RusselMethod(A, D, S)"""
+    """R: RusselMethod(A, D, S)"""
 
     print("Solving transportation problem using Vogel's approximation method...")
-    """V: vogel_s_approximation.VogelMethod(A, D, S)"""
+    v = VogelMethod(A, D, S)
+    print(v.vogel_solve())
 
 
 if __name__ == "__main__":
