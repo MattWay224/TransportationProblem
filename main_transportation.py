@@ -9,14 +9,15 @@ def main():
 
     print("Enter a Demand vector")
     D: Vector = Vector()
-    D.mInput()
+    D.vInput()
 
     print("Enter a Supply vector")
     S: Vector = Vector()
-    S.mInput()
+    S.vInput()
 
     print("Solving transportation problem using Northwest Cornel rule...")
-    N: NorthwestMethod(A, D, S)
+    n = NorthwestMethod(A, D, S)
+    print("Feasible solution for northwest method: " + str(n.nw_solve()))
 
     print("Solving transportation problem using Russel's approximation method...")
     """R: RusselMethod(A, D, S)"""
