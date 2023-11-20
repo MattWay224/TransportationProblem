@@ -18,3 +18,8 @@
     ```
    You will be asked to enter the table for transportation problem in matrix form, as well as Demand and Supply vectors.  
    Columns should be separated from each other by a space, and rows by line breaks.
+
+## 🪲 Run tests
+```shell
+python -m unittest tests/test_transportation.py
+```
