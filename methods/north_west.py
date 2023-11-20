@@ -49,6 +49,6 @@ class NorthwestMethod:
         value = 0
         for i in range(0, a.getHeight()):
             for j in range(0, a.getWidth()):
-                value += answer[i][j] * a.getMatrix()[i][j]
+                value += answer[i][j] * a[i][j]
 
         return value
