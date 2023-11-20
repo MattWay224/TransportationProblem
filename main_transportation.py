@@ -1,4 +1,5 @@
 from data.models import Matrix, Vector
+from data.exceptions import Exceptions
 from methods.north_west import NorthwestMethod
 from methods.russel import RusselApproximation
 from methods.vogel import VogelApproximation
@@ -16,6 +17,11 @@ def main():
     print("Enter a Supply vector")
     S: Vector = Vector()
     S.vInput()
+
+    #print init matrix
+
+    """Check initial data for exceptions"""
+    E: Exceptions(A, D, S)
 
     print("Solving transportation problem using Northwest Cornel rule...")
     n = NorthwestMethod(A, D, S)
