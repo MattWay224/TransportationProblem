@@ -1,6 +1,7 @@
 from data.models import Matrix, Vector, IdentityMatrix
 from dataclasses import dataclass
 
+
 @dataclass
 class Vogel:
     value: float
@@ -10,7 +11,7 @@ class VogelApproximation:
     a: Matrix
     d: Vector
     s: Vector
-    
+
     def __init__(self, a: Matrix, d: Vector, s: Vector):
 
         # Sanity checks for correct input
@@ -29,15 +30,12 @@ class VogelApproximation:
 
     def __get_penalty(self, matrix: 'Matrix'):
         return max(map(
-                        lambda x: (x[0], x[1][1 % len(x[1])]-x[1][0]),
-                        [(i, sorted(matrix.getColumn(i))) for i in range(matrix.getWidth())]
-                      ), 
-                   key= lambda x: x[1])
-        
-        
-            
-    
-    def vogel_solve(self):
+            lambda x: (x[0], x[1][1 % len(x[1])] - x[1][0]),
+            [(i, sorted(matrix.getColumn(i))) for i in range(matrix.getWidth())]
+        ),
+            key=lambda x: x[1])
+
+    def v_solve(self):
 
         matrix = self.a
         suply = self.s.getVector()
@@ -53,7 +51,7 @@ class VogelApproximation:
             else:
                 line = matrix.getColumn(col).getVector()
                 col = line.index(min(line))
-            
+
             temp = min(suply[row], demand[col])
             suply[row] -= temp
             demand[col] -= temp
@@ -64,7 +62,5 @@ class VogelApproximation:
             else:
                 matrix = matrix.removeRow(row)
                 suply.pop(row)
-        
+
         return value
-
-
