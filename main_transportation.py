@@ -1,6 +1,7 @@
 from data.models import Matrix, Vector
 from methods.north_west import NorthwestMethod
-from methods.vogel import VogelMethod
+from methods.russel import RusselApproximation
+from methods.vogel import VogelApproximation
 
 
 def main():
@@ -18,14 +19,15 @@ def main():
 
     print("Solving transportation problem using Northwest Cornel rule...")
     n = NorthwestMethod(A, D, S)
-    print(n.nw_solve())
+    print("Feasible solution for northwest method: " + str(n.nw_solve()) + "\n")
 
     print("Solving transportation problem using Russel's approximation method...")
-    """R: RusselMethod(A, D, S)"""
+    r = RusselApproximation(A, D, S)
+    print("Feasible solution for Russel's approximation method: " + str(r.r_solve()) + "\n")
 
     print("Solving transportation problem using Vogel's approximation method...")
-    v = VogelMethod(A, D, S)
-    print(v.vogel_solve())
+    v = VogelApproximation(A, D, S)
+    print("Feasible solution for Vogel's approximation method: " + str(v.v_solve()) + "\n")
 
 
 if __name__ == "__main__":
