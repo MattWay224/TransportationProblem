@@ -23,7 +23,6 @@ class RusselApproximation:
         assert all(x >= 0 for x in d.getVector()), "Demand vector should be non-negative"
 
         identity = IdentityMatrix(a.getHeight())
-        self.answer = a.hconcat(identity)
         self.delta = a.hconcat(identity)
         self.a = a
         self.d = d
@@ -31,8 +30,8 @@ class RusselApproximation:
 
     def r_solve(self):
         a = self.a
-        d = self.d
-        s = self.s
+        d = self.d.getVector().copy()
+        s = self.s.getVector().copy()
         answer = [[0] * a.getWidth() for _ in range(a.getHeight())]
         value = 0
 
@@ -40,34 +39,34 @@ class RusselApproximation:
         for i in range(a.getHeight()):
             mx = -1
             for j in range(a.getWidth()):
-                mx = max(mx, a.getMatrix()[i][j])
+                mx = max(mx, a[i][j])
             max_in_rows[i] = mx
 
         max_in_cols = [-1] * a.getWidth()
         for i in range(a.getWidth()):
             mx = -1
             for j in range(a.getHeight()):
-                mx = max(mx, a.getMatrix()[j][i])
+                mx = max(mx, a[j][i])
             max_in_cols[i] = mx
 
         for i in range(a.getHeight()):
             for j in range(0, a.getWidth()):
-                self.delta.getMatrix()[i][j] = a.getMatrix()[i][j] - max_in_rows[i] - max_in_cols[j]
+                self.delta[i][j] = a[i][j] - max_in_rows[i] - max_in_cols[j]
 
-        while d.sumV() != 0 and s.sumV() != 0:
+        while self.sum_v(d) != 0 and self.sum_v(s) != 0:
             min_delta_axes = self.find_min_delta(self.delta)
             if min_delta_axes == [-1, -1]:
                 break
-            min_value = min(s.getVector()[min_delta_axes[0]], d.getVector()[min_delta_axes[1]])
+            min_value = min(s[min_delta_axes[0]], d[min_delta_axes[1]])
             if min_value == 0:
                 self.delta[min_delta_axes[0]][min_delta_axes[1]] = 0
                 continue
             else:
-                value += a.getMatrix()[min_delta_axes[0]][min_delta_axes[1]] * min_value
+                value += a[min_delta_axes[0]][min_delta_axes[1]] * min_value
                 answer[min_delta_axes[0]][min_delta_axes[1]] = min_value
 
-                d.getVector()[min_delta_axes[1]] -= min_value
-                s.getVector()[min_delta_axes[0]] -= min_value
+                d[min_delta_axes[1]] -= min_value
+                s[min_delta_axes[0]] -= min_value
 
                 self.delta[min_delta_axes[0]][min_delta_axes[1]] = 0
 
@@ -78,7 +77,15 @@ class RusselApproximation:
         min = self.d.sumV() + self.s.sumV()  # Making a big number
         for i in range(0, delta.getHeight()):
             for j in range(0, delta.getWidth()):
-                if delta.getMatrix()[i][j] < min:
+                if delta[i][j] < min:
                     min = delta.getMatrix()[i][j]
                     coordinates = [i, j]
         return coordinates
+
+    @staticmethod
+    def sum_v(vector: list):
+        value = 0
+        for i in range(len(vector)):
+            value += vector[i]
+
+        return value
