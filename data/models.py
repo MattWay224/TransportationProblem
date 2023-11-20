@@ -112,6 +112,25 @@ class Matrix:
     def getWidth(self) -> int:
         return len(self._mat[0])
 
+    def sumM(self) -> int:
+        value = 0
+        for i in range(0, self.getWidth()):
+            value += self.sumCol(i)
+
+    def sumCol(self, col) -> int:
+        value = 0
+        for i in range(0, self.getHeight()):
+            value += self.getMatrix()[col][i]
+
+        return value
+
+    def sumRow(self, row) -> int:
+        value = 0
+        for i in range(0, self.getWidth()):
+            value += self.getMatrix()[i][row]
+
+        return value
+
     def __getitem__(self, index):
         return self._mat[index]
 
@@ -182,6 +201,13 @@ class Vector(Matrix):
 
     def getVector(self) -> List[float]:
         return self._mat[0]
+
+    def sumV(self):
+        value = 0
+        for i in range(0, self.getWidth()):
+            value += self.__getitem__(i)
+
+        return value
 
     def hconcat(self, vector: "Vector") -> "Vector":
         result = Vector(deepcopy(self._mat[0]))
