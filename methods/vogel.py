@@ -55,7 +55,7 @@ class VogelApproximation:
             temp = min(suply[row], demand[col])
             suply[row] -= temp
             demand[col] -= temp
-            value += temp
+            value += temp * matrix.getMatrix()[row][col]
             if suply[row] != 0:
                 matrix = matrix.removeCol(col)
                 demand.pop(col)
