@@ -37,7 +37,7 @@ class VogelApproximation:
 
     def v_solve(self):
 
-        matrix = self.a.getMatrix()
+        matrix = Matrix(self.a.getMatrix())
         suply = self.s.getVector().copy()
         demand = self.d.getVector().copy()
         value = 0
