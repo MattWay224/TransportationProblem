@@ -49,7 +49,7 @@ class VogelApproximation:
                 column = matrix.getColumn(col).getVector()
                 row = column.index(min(column))
             else:
-                line = matrix.getColumn(col).getVector()
+                line = matrix.mTranspose().getColumn(row).getVector()
                 col = line.index(min(line))
 
             temp = min(suply[row], demand[col])
