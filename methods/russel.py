@@ -58,11 +58,17 @@ class RusselApproximation:
         while d.sumV() != 0 and s.sumV() != 0:
             min_delta_axes = self.find_min_delta(self.delta)
             min_value = min(s.getVector()[min_delta_axes[0]], d.getVector()[min_delta_axes[1]])
-            value += a.getMatrix()[min_delta_axes[0]][min_delta_axes[1]] * min_value
+            if min_value == 0:
+                self.delta[min_delta_axes[0]][min_delta_axes[1]] = 0
+                continue
+            else:
+                value += a.getMatrix()[min_delta_axes[0]][min_delta_axes[1]] * min_value
+                answer.getMatrix()[min_delta_axes[0]][min_delta_axes[1]] = min_value
 
-            answer.getMatrix()[min_delta_axes[0]][min_delta_axes[1]] = min_value
+                d.getVector()[min_delta_axes[0]] -= min_value
+                s.getVector()[min_delta_axes[1]] -= min_value
 
-            self.delta[min_delta_axes[0]][min_delta_axes[1]] = 0
+                self.delta[min_delta_axes[0]][min_delta_axes[1]] = 0
 
         return value
 
@@ -73,5 +79,5 @@ class RusselApproximation:
             for j in range(0, delta.getHeight()):
                 if delta.getMatrix()[i][j] < min:
                     min = delta.getMatrix()[i][j]
-                    coordinates = {i, j}
+                    coordinates = [i, j]
         return coordinates
