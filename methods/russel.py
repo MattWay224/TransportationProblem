@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Russel:
-    value: float
+    value: int
 
 
 class RusselApproximation:
@@ -13,14 +13,6 @@ class RusselApproximation:
     s: Vector
 
     def __init__(self, a: Matrix, d: Vector, s: Vector):
-        # Sanity checks for correct input
-        assert isinstance(a, Matrix), "A is not a matrix"
-        assert isinstance(d, Vector), "Demand is not a vector"
-        assert isinstance(s, Vector), "Supply is not a vector"
-        assert a.getHeight() == s.getWidth(), "Length of supply vector does not correspond to # of rows of matrix A"
-        assert a.getWidth() == d.getWidth(), "Length of demand vector does not correspond to # of cols of matrix A"
-        assert all(x >= 0 for x in s.getVector()), "Supply vector should be non-negative"
-        assert all(x >= 0 for x in d.getVector()), "Demand vector should be non-negative"
 
         identity = IdentityMatrix(a.getHeight())
         self.delta = a.hconcat(identity)
@@ -35,19 +27,9 @@ class RusselApproximation:
         answer = [[0] * a.getWidth() for _ in range(a.getHeight())]
         value = 0
 
-        max_in_rows = [-1] * a.getHeight()
-        for i in range(a.getHeight()):
-            mx = -1
-            for j in range(a.getWidth()):
-                mx = max(mx, a[i][j])
-            max_in_rows[i] = mx
+        max_in_rows = [max(row) for row in zip(*a)]
 
-        max_in_cols = [-1] * a.getWidth()
-        for i in range(a.getWidth()):
-            mx = -1
-            for j in range(a.getHeight()):
-                mx = max(mx, a[j][i])
-            max_in_cols[i] = mx
+        max_in_cols = [max(col) for col in zip(*a)]
 
         for i in range(a.getHeight()):
             for j in range(0, a.getWidth()):

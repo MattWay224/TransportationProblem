@@ -14,15 +14,6 @@ class VogelApproximation:
 
     def __init__(self, a: Matrix, d: Vector, s: Vector):
 
-        # Sanity checks for correct input
-        assert isinstance(a, Matrix), "A is not a matrix"
-        assert isinstance(d, Vector), "Demand is not a vector"
-        assert isinstance(s, Vector), "Supply is not a vector"
-        assert a.getHeight() == s.getWidth(), "Length of supply vector does not correspond to # of rows of matrix A"
-        assert a.getWidth() == d.getWidth(), "Length of demand vector does not correspond to # of cols of matrix A"
-        assert all(x >= 0 for x in s.getVector()), "Supply vector should be non-negative"
-        assert all(x >= 0 for x in d.getVector()), "Demand vector should be non-negative"
-
         self.answer = a.hconcat(IdentityMatrix(a.getHeight()))
         self.a = a
         self.d = d
@@ -38,7 +29,7 @@ class VogelApproximation:
     def v_solve(self):
 
         matrix = Matrix(self.a.getMatrix())
-        suply = self.s.getVector().copy()
+        supply = self.s.getVector().copy()
         demand = self.d.getVector().copy()
         value = 0
 
@@ -52,15 +43,15 @@ class VogelApproximation:
                 line = matrix.mTranspose().getColumn(row).getVector()
                 col = line.index(min(line))
 
-            temp = min(suply[row], demand[col])
-            suply[row] -= temp
+            temp = min(supply[row], demand[col])
+            supply[row] -= temp
             demand[col] -= temp
             value += temp * matrix.getMatrix()[row][col]
-            if suply[row] != 0:
+            if supply[row] != 0:
                 matrix = matrix.removeCol(col)
                 demand.pop(col)
             else:
                 matrix = matrix.removeRow(row)
-                suply.pop(row)
+                supply.pop(row)
 
         return value
