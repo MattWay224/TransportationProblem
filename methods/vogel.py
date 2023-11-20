@@ -1,15 +1,12 @@
-
 from data.models import Matrix, Vector, IdentityMatrix
 from dataclasses import dataclass
-
-
 
 @dataclass
 class Vogel:
     value: float
 
 
-class Vogel:
+class VogelApproximation:
     a: Matrix
     d: Vector
     s: Vector

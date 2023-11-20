@@ -32,41 +32,23 @@ class NorthwestMethod:
         a = self.a
         d = self.d.getVector().copy()
         s = self.s.getVector().copy()
-        answer = self.answer
-
+        answer = [[0] * a.getWidth() for _ in range(a.getHeight())]
         i = 0
         j = 0
+        s_len = len(s)
+        d_len = len(d)
 
-        while i < len(s) and j < len(d):
-            if d[j] > s[i]:
-                answer.getMatrix()[i][j] = s[i]
-
-                d[j] -= s[i]
-                s[i] = 0
-
-                i += 1
-            elif d[j] < s[i]:
-                answer.getMatrix()[i][j] = d[j]
-
-                s[i] -= d[j]
-                d[j] = 0
-
-                j += 1
-            else:
-                answer.getMatrix()[i][j] = s[i]
-
-                d[j] = 0
-                s[i] = 0
-
-                i += 1
-                j += 1
+        while i < s_len and j < d_len:
+            minimal_value = min(d[j], s[i])
+            answer[i][j] = minimal_value
+            s[i] -= minimal_value
+            i += (s[i] == 0)
+            d[j] -= minimal_value
+            j += (d[j] == 0)
 
         value = 0
         for i in range(0, a.getHeight()):
             for j in range(0, a.getWidth()):
-                if answer.getMatrix()[i][j] is None:
-                    continue
-
-                value += answer.getMatrix()[i][j] * a.getMatrix()[i][j]
+                value += answer[i][j] * a.getMatrix()[i][j]
 
         return value
