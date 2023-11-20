@@ -65,6 +65,12 @@ class Matrix:
     def minorMatrix(self, i: int, j: int) -> "Matrix":
         return Matrix([row[:j] + row[j + 1 :] for row in (self._mat[:i] + self._mat[i + 1 :])])
 
+    def removeCol(self, j: int) -> "Matrix":
+        return Matrix([row[:j] + row[j + 1 :] for row in self._mat])
+
+    def removeRow(self, i: int) -> "Matrix":
+        return Matrix(self._mat[:i] + self._mat[i + 1 :])
+
     def det(self) -> float:
         if self.getHeight() != self.getWidth():
             raise ValueError("Cannot calculate inverse of nonsquare matrix")

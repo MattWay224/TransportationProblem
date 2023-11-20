@@ -8,6 +8,10 @@ class Northwest:
 
 
 class NorthwestMethod:
+    a: Matrix
+    d: Vector
+    s: Vector
+
     def __init__(self, a: Matrix, d: Vector, s: Vector):
 
         # Sanity checks for correct input
@@ -26,33 +30,33 @@ class NorthwestMethod:
 
     def nw_solve(self):
         a = self.a
-        d = self.d
-        s = self.s
+        d = self.d.getVector().copy()
+        s = self.s.getVector().copy()
         answer = self.answer
 
         i = 0
         j = 0
 
-        while i < s.getHeight() and j < d.getHeight():
-            if d.getVector()[j] > s.getVector()[i]:
-                answer.getMatrix()[i][j] = s.getVector()[i]
+        while i < len(s) and j < len(d):
+            if d[j] > s[i]:
+                answer.getMatrix()[i][j] = s[i]
 
-                d.getVector()[j] -= s.getVector()[i]
-                s.getVector()[i] = 0
+                d[j] -= s[i]
+                s[i] = 0
 
                 i += 1
-            elif d.getVector()[j] < s.getVector()[i]:
-                answer.getMatrix()[i][j] = d.getVector()[j]
+            elif d[j] < s[i]:
+                answer.getMatrix()[i][j] = d[j]
 
-                s.getVector()[i] -= d.getVector()[j]
-                d.getVector()[j] = 0
+                s[i] -= d[j]
+                d[j] = 0
 
                 j += 1
             else:
-                answer.getMatrix()[i][j] = s.getVector()[i]
+                answer.getMatrix()[i][j] = s[i]
 
-                d.getVector()[i] = 0
-                s.getVector()[j] = 0
+                d[j] = 0
+                s[i] = 0
 
                 i += 1
                 j += 1
