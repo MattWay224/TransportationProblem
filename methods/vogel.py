@@ -55,6 +55,7 @@ class VogelApproximation:
             supply[row] -= temp
             demand[col] -= temp
             value += temp * matrix.getMatrix()[row][col]
+            self.answer.getMatrix()[row][col] = value
             self.answer[row][col] = temp ###
 
             if supply[row] != 0:
