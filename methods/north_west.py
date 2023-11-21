@@ -5,6 +5,12 @@ from dataclasses import dataclass
 
 @dataclass
 class Northwest:
+    """Stores a solution to simplex method.
+            Args:
+                answer (Matrix): Matrix of decision variables
+                value (float): Solution to maximization problem
+            """
+    answer: Matrix
     value: int
 
 
@@ -12,7 +18,6 @@ class NorthwestMethod:
     a: Matrix
     d: Vector
     s: Vector
-    answer: Matrix
 
     def __init__(self, a: Matrix, d: Vector, s: Vector):
 
@@ -33,11 +38,14 @@ class NorthwestMethod:
         while i < s_len and j < d_len:
             minimal_value = min(d[j], s[i])
             self.answer[i][j] = minimal_value
+
             s[i] -= minimal_value
-            i += (s[i] == 0)
             d[j] -= minimal_value
+
+            i += (s[i] == 0)
             j += (d[j] == 0)
 
+        """Calculating feasible solution value"""
         value = 0
         for i in range(0, a.getHeight()):
             for j in range(0, a.getWidth()):
@@ -47,6 +55,7 @@ class NorthwestMethod:
 
         return value
 
+    """Function to create and print answer table"""
     def tabular(self):
         t = Tabular(self.answer, self.d, self.s)
         t.create_table()

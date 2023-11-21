@@ -5,6 +5,12 @@ from dataclasses import dataclass
 
 @dataclass
 class Vogel:
+    """Stores a solution to simplex method.
+            Args:
+                answer (Matrix): Matrix of decision variables
+                value (float): Solution to maximization problem
+            """
+    answer: Matrix
     value: float
 
 
@@ -62,6 +68,7 @@ class VogelApproximation:
 
         return value
 
+    """Function to create and print answer table"""
     def tabular(self):
         t = Tabular(self.answer, self.d, self.s)
         t.create_table()
