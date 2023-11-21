@@ -165,8 +165,8 @@ class IdentityMatrix(Matrix):
 
 
 class ZeroMatrix(Matrix):
-    def __init__(self, length: int):
-        self._mat = [[0] * length for _ in range(length)]
+    def __init__(self, width: int, height:int):
+        self._mat = [[0 for __ in range(width)] for _ in range(height)]
 
 
 class Vector(Matrix):
