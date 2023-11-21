@@ -1,10 +1,17 @@
-from data.models import Matrix, Vector, IdentityMatrix
+from data.models import Matrix, Vector, ZeroMatrix
+from data.tabular import Tabular
 from dataclasses import dataclass
 
 
 @dataclass
 class Russel:
-    value: float
+    """Stores a solution to simplex method.
+        Args:
+            answer (Matrix): Matrix of decision variables
+            value (float): Solution to maximization problem
+        """
+    answer: Matrix
+    value: int
 
 
 class RusselApproximation:
@@ -13,65 +20,93 @@ class RusselApproximation:
     s: Vector
 
     def __init__(self, a: Matrix, d: Vector, s: Vector):
-        # Sanity checks for correct input
-        assert isinstance(a, Matrix), "A is not a matrix"
-        assert isinstance(d, Vector), "Demand is not a vector"
-        assert isinstance(s, Vector), "Supply is not a vector"
-        assert a.getHeight() == s.getWidth(), "Length of supply vector does not correspond to # of rows of matrix A"
-        assert a.getWidth() == d.getWidth(), "Length of demand vector does not correspond to # of cols of matrix A"
-        assert all(x >= 0 for x in s.getVector()), "Supply vector should be non-negative"
-        assert all(x >= 0 for x in d.getVector()), "Demand vector should be non-negative"
 
-        self.answer = a.hconcat(IdentityMatrix(a.getHeight()))
-        self.delta = a.hconcat(IdentityMatrix(a.getHeight()))
+        self.answer = ZeroMatrix(a.getWidth(), a.getHeight())
+        self.delta = ZeroMatrix(a.getWidth(), a.getHeight())
         self.a = a
         self.d = d
         self.s = s
 
-    def r_solve(self):
-        a = self.a
-        d = self.d
-        s = self.s
-        answer = self.answer
+    @staticmethod
+    def sum_v(vector: list):
         value = 0
-
-        max_in_rows = [-1] * a.getHeight()
-        for i in range(a.getHeight()):
-            max = -1
-            for j in range(a.getWidth()):
-                if a.getMatrix()[i][j] > max:
-                    max = a.getMatrix()[i][j]
-            max_in_rows[i] = max
-
-        max_in_cols = [-1] * a.getWidth()
-        for i in range(a.getWidth()):
-            max = -1
-            for j in range(a.getHeight()):
-                if a.getMatrix()[j][i] > max:
-                    max = a.getMatrix()[j][i]
-            max_in_cols[i] = max
-
-        for i in range(a.getHeight()):
-            for j in range(0, a.getWidth()):
-                self.delta.getMatrix()[i][j] = a.getMatrix()[i][j] - max_in_rows[i] - max_in_cols[j]
-
-        while d.sumV() != 0 and s.sumV() != 0:
-            min_delta_axes = self.find_min_delta(self.delta)
-            min_value = min(s.getVector()[min_delta_axes[0]], d.getVector()[min_delta_axes[1]])
-            value += a.getMatrix()[min_delta_axes[0]][min_delta_axes[1]] * min_value
-
-            answer.getMatrix()[min_delta_axes[0]][min_delta_axes[1]] = min_value
-
-            self.delta[min_delta_axes[0]][min_delta_axes[1]] = 0
+        for i in range(len(vector)):
+            value += vector[i]
 
         return value
 
+    """Finds minimal delta in delta matrix"""
     def find_min_delta(self, delta: Matrix):
         coordinates = [-1] * 2
-        min = self.d.sumV() + self.s.sumV()  # Making a big number
+        min = self.sum_v(self.d.getVector()) + self.sum_v(self.d.getVector())  # Making a big number
         for i in range(0, delta.getHeight()):
-            for j in range(0, delta.getHeight()):
-                if delta.getMatrix()[i][j] < min:
+            for j in range(0, delta.getWidth()):
+                if delta[i][j] < min and delta:
                     min = delta.getMatrix()[i][j]
-                    coordinates = {i, j}
+                    coordinates = [i, j]
         return coordinates
+
+    """Creates delta matrix"""
+    def create_delta(self, a: Matrix, max_in_rows, max_in_cols):
+        for i in range(a.getHeight()):
+            for j in range(0, a.getWidth()):
+                if a[i][j] != 0 and max_in_rows[i] != 0 and max_in_cols[j] != 0:
+                    self.delta[i][j] = a[i][j] - max_in_rows[i] - max_in_cols[j]
+                else:
+                    self.delta[i][j] = 0
+
+    @staticmethod
+    def eliminate_row(row, a: Matrix):
+        for i in range(a.getWidth()):
+            a[row][i] = 0
+
+    @staticmethod
+    def eliminate_column(col, a: Matrix):
+        for i in range(a.getHeight()):
+            a[i][col] = 0
+
+    def r_solve(self):
+        a = Matrix(self.a.getMatrix())
+        d = self.d.getVector().copy()
+        s = self.s.getVector().copy()
+        value = 0
+
+        while self.sum_v(s) != 0:
+            max_in_rows = [max(row) for row in a]
+            max_in_cols = [max(col) for col in zip(*a)]
+            self.create_delta(a, max_in_rows, max_in_cols)
+
+            min_delta_axes = self.find_min_delta(self.delta)
+            if min_delta_axes == [-1, -1]:
+                break
+
+            min_value = min(s[min_delta_axes[0]], d[min_delta_axes[1]])
+            if min_value == 0:
+                if s[min_delta_axes[0]] == 0:
+                    self.eliminate_row(min_delta_axes[0], a)
+                if d[min_delta_axes[1]] == 0:
+                    self.eliminate_column(min_delta_axes[1], a)
+
+                continue
+
+            else:
+                value += a[min_delta_axes[0]][min_delta_axes[1]] * min_value
+                self.answer[min_delta_axes[0]][min_delta_axes[1]] = min_value
+
+                d[min_delta_axes[1]] -= min_value
+                s[min_delta_axes[0]] -= min_value
+
+                if s[min_delta_axes[0]] == 0:
+                    self.eliminate_row(min_delta_axes[0], a)
+                if d[min_delta_axes[1]] == 0:
+                    self.eliminate_column(min_delta_axes[1], a)
+
+        self.tabular()
+
+        return value
+
+    """Function to create and print answer table"""
+    def tabular(self):
+        t = Tabular(self.answer, self.d, self.s)
+        t.create_table()
+        t.print_table()

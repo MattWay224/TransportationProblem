@@ -65,6 +65,12 @@ class Matrix:
     def minorMatrix(self, i: int, j: int) -> "Matrix":
         return Matrix([row[:j] + row[j + 1 :] for row in (self._mat[:i] + self._mat[i + 1 :])])
 
+    def removeCol(self, j: int) -> "Matrix":
+        return Matrix([row[:j] + row[j + 1 :] for row in self._mat])
+
+    def removeRow(self, i: int) -> "Matrix":
+        return Matrix(self._mat[:i] + self._mat[i + 1 :])
+
     def det(self) -> float:
         if self.getHeight() != self.getWidth():
             raise ValueError("Cannot calculate inverse of nonsquare matrix")
@@ -105,6 +111,25 @@ class Matrix:
 
     def getWidth(self) -> int:
         return len(self._mat[0])
+
+    def sumM(self) -> int:
+        value = 0
+        for i in range(0, self.getWidth()):
+            value += self.sumCol(i)
+
+    def sumCol(self, col) -> int:
+        value = 0
+        for i in range(0, self.getHeight()):
+            value += self.getMatrix()[col][i]
+
+        return value
+
+    def sumRow(self, row) -> int:
+        value = 0
+        for i in range(0, self.getWidth()):
+            value += self.getMatrix()[i][row]
+
+        return value
 
     def __getitem__(self, index):
         return self._mat[index]
@@ -176,6 +201,13 @@ class Vector(Matrix):
 
     def getVector(self) -> List[float]:
         return self._mat[0]
+
+    def sumV(self):
+        value = 0
+        for i in range(0, self.getWidth()):
+            value += self.__getitem__(i)
+
+        return value
 
     def hconcat(self, vector: "Vector") -> "Vector":
         result = Vector(deepcopy(self._mat[0]))

@@ -1,68 +1,62 @@
-from data.models import Matrix, Vector, IdentityMatrix
+from data.models import Matrix, Vector, ZeroMatrix
+from data.tabular import Tabular
 from dataclasses import dataclass
 
 
 @dataclass
 class Northwest:
-    value: float
+    """Stores a solution to simplex method.
+            Args:
+                answer (Matrix): Matrix of decision variables
+                value (float): Solution to maximization problem
+            """
+    answer: Matrix
+    value: int
 
 
 class NorthwestMethod:
+    a: Matrix
+    d: Vector
+    s: Vector
+
     def __init__(self, a: Matrix, d: Vector, s: Vector):
 
-        # Sanity checks for correct input
-        assert isinstance(a, Matrix), "A is not a matrix"
-        assert isinstance(d, Vector), "Demand is not a vector"
-        assert isinstance(s, Vector), "Supply is not a vector"
-        assert a.getHeight() == s.getWidth(), "Length of supply vector does not correspond to # of rows of matrix A"
-        assert a.getWidth() == d.getWidth(), "Length of demand vector does not correspond to # of cols of matrix A"
-        assert all(x >= 0 for x in s.getVector()), "Supply vector should be non-negative"
-        assert all(x >= 0 for x in d.getVector()), "Demand vector should be non-negative"
-
-        self.answer = a.hconcat(IdentityMatrix(a.getHeight()))
+        self.answer = ZeroMatrix(a.getWidth(), a.getHeight())
         self.a = a
         self.d = d
         self.s = s
 
     def nw_solve(self):
         a = self.a
-        d = self.d
-        s = self.s
-        answer = self.answer
-
+        d = self.d.getVector().copy()
+        s = self.s.getVector().copy()
         i = 0
         j = 0
+        s_len = len(s)
+        d_len = len(d)
 
-        while i < s.getHeight() and j < d.getHeight():
-            if d.getVector()[j] > s.getVector()[i]:
-                answer.getMatrix()[i][j] = s.getVector()[i]
+        while i < s_len and j < d_len:
+            minimal_value = min(d[j], s[i])
+            self.answer[i][j] = minimal_value
 
-                d.getVector()[j] -= s.getVector()[i]
-                s.getVector()[i] = 0
+            s[i] -= minimal_value
+            d[j] -= minimal_value
 
-                i += 1
-            elif d.getVector()[j] < s.getVector()[i]:
-                answer.getMatrix()[i][j] = d.getVector()[j]
+            i += (s[i] == 0)
+            j += (d[j] == 0)
 
-                s.getVector()[i] -= d.getVector()[j]
-                d.getVector()[j] = 0
-
-                j += 1
-            else:
-                answer.getMatrix()[i][j] = s.getVector()[i]
-
-                d.getVector()[i] = 0
-                s.getVector()[j] = 0
-
-                i += 1
-                j += 1
-
+        """Calculating feasible solution value"""
         value = 0
         for i in range(0, a.getHeight()):
             for j in range(0, a.getWidth()):
-                if answer.getMatrix()[i][j] is None:
-                    continue
+                value += self.answer[i][j] * a[i][j]
 
-                value += answer.getMatrix()[i][j] * a.getMatrix()[i][j]
+        self.tabular()
 
         return value
+
+    """Function to create and print answer table"""
+    def tabular(self):
+        t = Tabular(self.answer, self.d, self.s)
+        t.create_table()
+        t.print_table()
