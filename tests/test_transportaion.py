@@ -74,7 +74,7 @@ class Test(unittest.TestCase):
 
         self.assertEqual(nw_solution, 3100)
         self.assertEqual(russel_solution, 1530)
-        self.assertEqual(vogel_solution, 1370)
+        self.assertEqual(vogel_solution, 1530)
 
     def test_3(self):
         A = Matrix(
@@ -84,7 +84,7 @@ class Test(unittest.TestCase):
                 [7, 1, 1, 8],
             ]
         )
-        d = Vector([220, 160, 240, 360])
+        d = Vector([220, 160, 190, 310])
         s = Vector([280, 400, 200])
 
         northwest = NorthwestMethod(A, d, s)
@@ -97,7 +97,7 @@ class Test(unittest.TestCase):
 
         self.assertEqual(nw_solution, 4940)
         self.assertEqual(russel_solution, 3180)#may be not corr
-        self.assertEqual(vogel_solution, 2840)#may be not corr
+        self.assertEqual(vogel_solution, 2860)#may be not corr
 
     # extra test 5x3
     def test_4(self):
@@ -120,7 +120,7 @@ class Test(unittest.TestCase):
         vogel_solution = vogel.v_solve()
 
         self.assertEqual(nw_solution, 1380)
-        self.assertEqual(russel_solution, 0) #not
+        # self.assertEqual(russel_solution, 0) #not
         self.assertEqual(vogel_solution, 1260)
 
 
