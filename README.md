@@ -12,7 +12,24 @@
     ```shell
     cd TransportationProblem
     ```
-3. Run program
+3. Install and use virtualenv (optional):
+    ```shell
+    pip install virtualenv
+    python3 -m venv venv
+    ```
+   On Windows, run:
+    ```shell
+    .\venv\Scripts\activate.bat
+    ```
+   On Unix or MacOS, run:
+    ```shell
+    source venv/bin/activate
+    ```
+4. Install the requirements:
+    ```shell
+    pip install -r requirements.txt
+    ```
+5. Run program
     ```shell
     python main_transportation.py
     ```
