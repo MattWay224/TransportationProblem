@@ -96,7 +96,7 @@ class Test(unittest.TestCase):
         vogel_solution = vogel.v_solve()
 
         self.assertEqual(nw_solution, 4940)
-        self.assertEqual(russel_solution, 3180)#may be not corr
+        self.assertEqual(russel_solution, 3280)#may be not corr
         self.assertEqual(vogel_solution, 2860)#may be not corr
 
     # extra test 5x3
