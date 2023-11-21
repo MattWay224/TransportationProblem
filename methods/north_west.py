@@ -1,4 +1,5 @@
-from data.models import Matrix, Vector, IdentityMatrix
+from data.models import Matrix, Vector, ZeroMatrix
+from data.tabular import Tabular
 from dataclasses import dataclass
 
 
@@ -11,10 +12,11 @@ class NorthwestMethod:
     a: Matrix
     d: Vector
     s: Vector
+    answer: Matrix
 
     def __init__(self, a: Matrix, d: Vector, s: Vector):
 
-        self.answer = a.hconcat(IdentityMatrix(a.getHeight()))
+        self.answer = ZeroMatrix(a.getWidth(), a.getHeight())
         self.a = a
         self.d = d
         self.s = s
@@ -23,7 +25,6 @@ class NorthwestMethod:
         a = self.a
         d = self.d.getVector().copy()
         s = self.s.getVector().copy()
-        answer = [[0] * a.getWidth() for _ in range(a.getHeight())]
         i = 0
         j = 0
         s_len = len(s)
@@ -31,7 +32,7 @@ class NorthwestMethod:
 
         while i < s_len and j < d_len:
             minimal_value = min(d[j], s[i])
-            answer[i][j] = minimal_value
+            self.answer[i][j] = minimal_value
             s[i] -= minimal_value
             i += (s[i] == 0)
             d[j] -= minimal_value
@@ -40,6 +41,13 @@ class NorthwestMethod:
         value = 0
         for i in range(0, a.getHeight()):
             for j in range(0, a.getWidth()):
-                value += answer[i][j] * a[i][j]
+                value += self.answer[i][j] * a[i][j]
+
+        self.tabular()
 
         return value
+
+    def tabular(self):
+        t = Tabular(self.answer, self.d, self.s)
+        t.create_table()
+        t.print_table()

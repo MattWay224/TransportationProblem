@@ -1,4 +1,5 @@
-from data.models import Matrix, Vector, IdentityMatrix
+from data.models import Matrix, Vector, ZeroMatrix
+from data.tabular import Tabular
 from dataclasses import dataclass
 
 
@@ -14,12 +15,13 @@ class VogelApproximation:
 
     def __init__(self, a: Matrix, d: Vector, s: Vector):
 
-        self.answer = a.hconcat(IdentityMatrix(a.getHeight()))
+        self.answer = ZeroMatrix(a.getWidth(), a.getHeight())
         self.a = a
         self.d = d
         self.s = s
 
-    def __get_penalty(self, matrix: 'Matrix'):
+    @staticmethod
+    def __get_penalty(matrix: 'Matrix'):
         return max(map(
             lambda x: (x[0], x[1][1 % len(x[1])] - x[1][0]),
             [(i, sorted(matrix.getColumn(i))) for i in range(matrix.getWidth())]
@@ -47,6 +49,8 @@ class VogelApproximation:
             supply[row] -= temp
             demand[col] -= temp
             value += temp * matrix.getMatrix()[row][col]
+            self.answer[row][col] = temp ###
+
             if supply[row] != 0:
                 matrix = matrix.removeCol(col)
                 demand.pop(col)
@@ -54,4 +58,11 @@ class VogelApproximation:
                 matrix = matrix.removeRow(row)
                 supply.pop(row)
 
+        self.tabular()
+
         return value
+
+    def tabular(self):
+        t = Tabular(self.answer, self.d, self.s)
+        t.create_table()
+        t.print_table()
